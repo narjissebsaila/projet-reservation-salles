@@ -3,6 +3,8 @@
     Page : create.php
     Rôle : afficher le formulaire d'ajout d'une réservation.
 */
+// On récupère l'erreur si elle existe
+$error = $_GET["error"] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -26,25 +28,30 @@
     </header>
 
     <section class="card">
-        <?php if (isset($_GET["error"])): ?>
+        <?php if ($error): ?>
 
-    <?php if ($_GET["error"] == "heure"): ?>
+    <?php if ($error == "heure"): ?>
         <div class="alert alert-error">
             L'heure de début doit être inférieure à l'heure de fin.
         </div>
     <?php endif; ?>
 
-    <?php if ($_GET["error"] == "conflit"): ?>
+    <?php if ($error == "conflit"): ?>
         <div class="alert alert-error">
             Cette salle est déjà réservée dans ce créneau.
         </div>
     <?php endif; ?>
 
-    <?php if ($_GET["error"] == "statut"): ?>
+    <?php if ($error == "statut"): ?>
         <div class="alert alert-error">
             Le statut choisi est invalide.
         </div>
     <?php endif; ?>
+    <?php if ($error == "vide"): ?>
+    <div class="alert alert-error">
+        Tous les champs sont obligatoires.
+    </div>
+<?php endif; ?>
 
 <?php endif; ?>
         <form action="../actions/store.php" method="POST" class="form">
