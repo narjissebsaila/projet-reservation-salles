@@ -3,7 +3,8 @@
     Page : create.php
     Rôle : afficher le formulaire d'ajout d'une réservation.
 */
-// On récupère l'erreur si elle existe
+// On récupère l'erreur envoyée dans l'URL (ex: ?error=heure)
+// Si aucune erreur → $error = null
 $error = $_GET["error"] ?? null;
 ?>
 
@@ -12,7 +13,7 @@ $error = $_GET["error"] ?? null;
 <head>
     <meta charset="UTF-8">
     <title>Ajouter une réservation - RoomBook</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=<?= time(); ?>">
 </head>
 <body>
 
@@ -69,7 +70,7 @@ $error = $_GET["error"] ?? null;
             <input type="time" name="heure_fin" required>
 
             <label>Responsable</label>
-            <input type="text" name="responsable" required placeholder="Ex : Mme El Amrani">
+            <input type="text" name="responsable" required placeholder="Ex : Mme MARFOQ">
 
             <label>Motif</label>
             <textarea name="motif" required placeholder="Ex : Cours, réunion, TP..."></textarea>

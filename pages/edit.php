@@ -5,7 +5,7 @@
     Rôle : afficher le formulaire de modification d'une réservation.
     Cette page récupère d'abord la réservation choisie grâce à son id.
 */
-
+// Connexion à la base de données
 require_once "../config/database.php";
 
 /*
@@ -17,7 +17,7 @@ if (!isset($_GET["id"])) {
     header("Location: index.php");
     exit;
 }
-
+// Récupération de l'id
 $id = $_GET["id"];
 
 /*
@@ -59,7 +59,9 @@ if (!$reservation) {
     </header>
 
     <section class="card">
-
+     
+        //formulaire qui envoie vers update.php
+    
         <form action="../actions/update.php" method="POST" class="form">
 
             <!-- Champ caché : il sert à envoyer l'id vers update.php -->

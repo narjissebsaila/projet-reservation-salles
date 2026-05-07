@@ -175,3 +175,20 @@ tr:hover {
 .btn-submit:hover {
     background-color: #1e40af;
 }
+
+
+/* =========================
+   MESSAGES D'ERREUR
+========================= */
+
+.alert,
+.alert-error {
+    display: block;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    background-color: #ffe5e5 !important;
+    color: #b00020 !important;
+    border: 1px solid #b00020 !important;
+}
