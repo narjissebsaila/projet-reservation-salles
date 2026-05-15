@@ -2,39 +2,29 @@
 
 /*
     Page : edit.php
-    Rôle : afficher le formulaire de modification d'une réservation.
-    Cette page récupère d'abord la réservation choisie grâce à son id.
+    Rôle : afficher le formulaire de modification.
 */
-// Connexion à la base de données
+
 require_once "../config/database.php";
 
-/*
-    On vérifie si l'id existe dans l'URL.
-    Exemple :
-    edit.php?id=2
-*/
-if (!isset($_GET["id"])) {
-    header("Location: index.php");
-    exit;
-}
-// Récupération de l'id
 $id = $_GET["id"];
 
-/*
-    On récupère les informations de la réservation à modifier.
-*/
 $sql = "SELECT * FROM reservations WHERE id = ?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$id]);
 $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
 
-/*
-    Si aucune réservation n'est trouvée, on retourne vers la liste.
-*/
 if (!$reservation) {
     header("Location: index.php");
     exit;
 }
+
+/*
+    Récupérer les salles pour les afficher dans la liste.
+*/
+$sqlSalles = "SELECT * FROM salles ORDER BY nom";
+$stmtSalles = $pdo->query($sqlSalles);
+$salles = $stmtSalles->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -52,80 +42,69 @@ if (!$reservation) {
     <header class="header">
         <div>
             <h1>Modifier la réservation</h1>
-            <p>Mettre à jour les informations de la salle</p>
+            <p>Mettre à jour les informations</p>
         </div>
 
         <a href="index.php" class="btn btn-primary">Retour</a>
     </header>
 
     <section class="card">
-     
-        //formulaire qui envoie vers update.php
-    
+
         <form action="../actions/update.php" method="POST" class="form">
 
-            <!-- Champ caché : il sert à envoyer l'id vers update.php -->
-            <input type="hidden" name="id" value="<?= htmlspecialchars($reservation['id']); ?>">
+            <input type="hidden" name="id" value="<?= $reservation["id"] ?>">
 
             <label>Salle</label>
-            <input 
-                type="text" 
-                name="salle" 
-                value="<?= htmlspecialchars($reservation['salle']); ?>" 
-                required
-            >
+            <select name="salle_id" required>
+                <?php foreach ($salles as $salle): ?>
+                    <option value="<?= $salle["id"] ?>"
+                        <?php if ($salle["id"] == $reservation["salle_id"]) echo "selected"; ?>>
+                        <?= htmlspecialchars($salle["nom"]) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
             <label>Date de réservation</label>
-            <input 
-                type="date" 
-                name="date_reservation" 
-                value="<?= htmlspecialchars($reservation['date_reservation']); ?>" 
-                required
-            >
+            <input type="date" name="date_reservation"
+                   value="<?= $reservation["date_reservation"] ?>" required>
 
             <label>Heure de début</label>
-            <input 
-                type="time" 
-                name="heure_debut" 
-                value="<?= htmlspecialchars($reservation['heure_debut']); ?>" 
-                required
-            >
+            <input type="time" name="heure_debut"
+                   value="<?= $reservation["heure_debut"] ?>" required>
 
             <label>Heure de fin</label>
-            <input 
-                type="time" 
-                name="heure_fin" 
-                value="<?= htmlspecialchars($reservation['heure_fin']); ?>" 
-                required
-            >
+            <input type="time" name="heure_fin"
+                   value="<?= $reservation["heure_fin"] ?>" required>
 
             <label>Responsable</label>
-            <input 
-                type="text" 
-                name="responsable" 
-                value="<?= htmlspecialchars($reservation['responsable']); ?>" 
-                required
-            >
+            <input type="text" name="responsable"
+                   value="<?= htmlspecialchars($reservation["responsable"]) ?>" required>
 
             <label>Motif</label>
-            <textarea name="motif" required><?= htmlspecialchars($reservation['motif']); ?></textarea>
+            <textarea name="motif"><?= htmlspecialchars($reservation["motif"]) ?></textarea>
 
             <label>Statut</label>
             <select name="statut" required>
-                <option value="en_attente" <?= $reservation['statut'] == 'en_attente' ? 'selected' : ''; ?>>
+                <option value="en_attente" <?= $reservation["statut"] == "en_attente" ? "selected" : "" ?>>
                     En attente
                 </option>
 
-                <option value="confirmee" <?= $reservation['statut'] == 'confirmee' ? 'selected' : ''; ?>>
+                <option value="confirmee" <?= $reservation["statut"] == "confirmee" ? "selected" : "" ?>>
                     Confirmée
                 </option>
 
-                <option value="annulee" <?= $reservation['statut'] == 'annulee' ? 'selected' : ''; ?>>
+                <option value="refusee" <?= $reservation["statut"] == "refusee" ? "selected" : "" ?>>
+                    Refusée
+                </option>
+
+                <option value="annulee" <?= $reservation["statut"] == "annulee" ? "selected" : "" ?>>
                     Annulée
                 </option>
             </select>
 
-            <button type="submit" class="btn-submit">Enregistrer les modifications</button>
+            <button type="submit" class="btn-submit">
+                Enregistrer les modifications
+            </button>
 
         </form>
 

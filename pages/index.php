@@ -2,14 +2,35 @@
 
 /*
     Page : index.php
-    Rôle : afficher la liste des réservations.
-    C'est la partie READ du CRUD.
+
+    Rôle :
+    Afficher la liste des réservations.
+
+    Nouvelle version :
+    La salle vient maintenant de la table salles.
 */
 
 require_once "../config/database.php";
 
-// Récupération de toutes les réservations depuis la base de données
-$sql = "SELECT * FROM reservations ORDER BY date_reservation, heure_debut";
+
+/*
+    Récupérer les réservations avec le nom de la salle.
+*/
+$sql = "
+    SELECT 
+        r.id,
+        r.date_reservation,
+        r.heure_debut,
+        r.heure_fin,
+        r.responsable,
+        r.motif,
+        r.statut,
+        s.nom AS nom_salle
+    FROM reservations r
+    INNER JOIN salles s ON r.salle_id = s.id
+    ORDER BY r.date_reservation DESC, r.heure_debut DESC
+";
+
 $stmt = $pdo->query($sql);
 $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -20,40 +41,47 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>RoomBook - Réservations</title>
-
-    <!-- Lien vers le fichier CSS -->
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 
 <div class="container">
 
-    <!-- En-tête de l'application -->
     <header class="header">
         <div>
             <h1>RoomBook</h1>
             <p>Gestion des réservations de salles</p>
         </div>
 
-        <a href="create.php" class="btn btn-primary">+ Nouvelle réservation</a>
+        <a href="create.php" class="btn btn-primary">
+            + Nouvelle réservation
+        </a>
     </header>
 
-    <!-- Carte principale -->
     <section class="card">
 
-        <div class="card-header">
-            <h2>Liste des réservations</h2>
+        <h2>Liste des réservations</h2>
 
-            <!-- Champ de recherche simple côté navigateur -->
-            <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Rechercher une salle, un responsable..."
-                class="search-input"
-            >
-        </div>
+        <?php if (isset($_GET["success"]) && $_GET["success"] == "ajout"): ?>
+            <div class="alert alert-success">
+                Réservation ajoutée avec succès.
+            </div>
+        <?php endif; ?>
 
-        <!-- Tableau des réservations -->
+
+        <?php if (isset($_GET["success"]) && $_GET["success"] == "modification"): ?>
+    <div class="alert alert-success">
+        Réservation modifiée avec succès.
+    </div>
+   <?php endif; ?>
+
+  <?php if (isset($_GET["success"]) && $_GET["success"] == "suppression"): ?>
+    <div class="alert alert-success">
+        Réservation supprimée avec succès.
+    </div>
+  <?php endif; ?>
+
+
         <table>
             <thead>
                 <tr>
@@ -69,38 +97,42 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tr>
             </thead>
 
-            <tbody id="reservationTable">
-                <?php foreach ($reservations as $reservation): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($reservation['id']); ?></td>
-                        <td><?= htmlspecialchars($reservation['salle']); ?></td>
-                        <td><?= htmlspecialchars($reservation['date_reservation']); ?></td>
-                        <td><?= htmlspecialchars($reservation['heure_debut']); ?></td>
-                        <td><?= htmlspecialchars($reservation['heure_fin']); ?></td>
-                        <td><?= htmlspecialchars($reservation['responsable']); ?></td>
-                        <td><?= htmlspecialchars($reservation['motif']); ?></td>
+            <tbody>
 
-                        <td>
-                            <span class="badge <?= htmlspecialchars($reservation['statut']); ?>">
-                                <?= htmlspecialchars($reservation['statut']); ?>
-                            </span>
-                        </td>
+            <?php foreach ($reservations as $reservation): ?>
+                <tr>
+                    <td><?= $reservation["id"] ?></td>
 
-                        <td class="actions">
-                            <a href="edit.php?id=<?= $reservation['id']; ?>" class="btn btn-edit">
-                                Modifier
-                            </a>
+                    <td><?= htmlspecialchars($reservation["nom_salle"]) ?></td>
 
-                            <a 
-                                href="../actions/delete.php?id=<?= $reservation['id']; ?>" 
-                                class="btn btn-delete"
-                                onclick="return confirm('Voulez-vous vraiment supprimer cette réservation ?');"
-                            >
-                                Supprimer
-                            </a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+                    <td><?= htmlspecialchars($reservation["date_reservation"]) ?></td>
+
+                    <td><?= htmlspecialchars($reservation["heure_debut"]) ?></td>
+
+                    <td><?= htmlspecialchars($reservation["heure_fin"]) ?></td>
+
+                    <td><?= htmlspecialchars($reservation["responsable"]) ?></td>
+
+                    <td><?= htmlspecialchars($reservation["motif"]) ?></td>
+
+                    <td>
+                           <span class="badge <?= $reservation["statut"] ?>">
+                           <?= htmlspecialchars($reservation["statut"]) ?>
+                          </span>
+                    </td>
+
+                    <td>
+                      <div class="actions">
+                        <a href="edit.php?id=<?= $reservation["id"] ?>" class="btn btn-edit"> Modifier </a>
+
+                        <a href="../actions/delete.php?id=<?= $reservation["id"] ?>"
+                             class="btn btn-delete" onclick="return confirm('Voulez-vous vraiment supprimer cette réservation ?')">Supprimer
+                        </a>
+                      </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+
             </tbody>
         </table>
 
@@ -108,7 +140,6 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </div>
 
-<script src="../assets/js/script.js"></script>
 
 </body>
 </html>
