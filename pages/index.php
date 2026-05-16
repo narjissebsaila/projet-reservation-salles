@@ -43,6 +43,41 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>RoomBook - Réservations</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+
+<script>
+    setTimeout(function () {
+
+        // Sélectionner le message de succès
+        const alert = document.querySelector(".alert-success");
+
+        /*
+            Si le message existe,
+            on le masque après 3 secondes.
+        */
+        if (alert) {
+            alert.style.display = "none";
+        }
+
+        /*
+            Vérifier si l’URL contient
+            un paramètre success=
+        */
+        if (window.location.search.includes("success=")) {
+
+            /*
+                Nettoyer l’URL sans recharger la page.
+            */
+            window.history.replaceState(
+                {},
+                document.title,
+                "index.php"
+            );
+        }
+
+    }, 3000);
+</script>
+
+<script src="../assets/js/script.js"></script>
 <body>
 
 <div class="container">
@@ -61,7 +96,8 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <section class="card">
 
         <h2>Liste des réservations</h2>
-
+        <input type="text" id="searchInput" class="search-input" placeholder="Rechercher une réservation...">
+        <br></br>
         <?php if (isset($_GET["success"]) && $_GET["success"] == "ajout"): ?>
             <div class="alert alert-success">
                 Réservation ajoutée avec succès.
@@ -97,7 +133,7 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody id="reservationTable">
 
             <?php foreach ($reservations as $reservation): ?>
                 <tr>
@@ -139,7 +175,7 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </section>
 
 </div>
-
+<script src="../assets/js/script.js"></script>
 
 </body>
 </html>
