@@ -53,6 +53,11 @@ body {
     align-items: center;
     margin-bottom: 20px;
 }
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
 
 /* Champ de recherche */
 .search-input {
@@ -65,7 +70,7 @@ body {
 /* Tableau */
 table {
     width: 100%;
-    border-collapse: collapse;
+    overflow-x: auto;
 }
 
 thead {
@@ -202,4 +207,8 @@ tr:hover {
     background-color: #dcfce7 !important;
     color: #166534 !important;
     border: 1px solid #166534 !important;
+}
+
+* {
+    box-sizing: border-box;
 }

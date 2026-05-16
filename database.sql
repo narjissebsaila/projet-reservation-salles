@@ -41,3 +41,20 @@ INSERT INTO salles (nom, capacite, localisation) VALUES
 ('Salle Informatique', 25, 'Bloc Info'),
 ('Amphi 1', 100, 'Bloc Principal'),
 ('Salle C', 35, 'Bloc C');
+
+INSERT INTO utilisateurs
+(
+    nom,
+    email,
+    mot_de_passe,
+    role,
+    type_client
+)
+VALUES
+(
+    'Admin',
+    'admin@gmail.com',
+    '$2y$10$xVfC5TCXWIbOYhz1/Vuelu.ThhTqH/YPJzZHyfrwnp9toKKeN8N9W',
+    'admin',
+    'autre'
+);
